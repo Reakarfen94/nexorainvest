@@ -217,7 +217,7 @@
             
             <div class="form-group" style="margin-top: 15px;"><label>Lien de Parrainage</label>
                 <div class="address-box">
-                    <span id="refLinkText" style="font-size: 12px; color:#c5a059; font-weight:bold;">https://nexorainvest.dev/register.html?ref=GRACE94</span>
+                    <span id="refLinkText" style="font-size: 12px; color:#c5a059; font-weight:bold;">Génération du lien...</span>
                     <button type="button" class="btn-copy" onclick="copyAddress('refLinkText')">Copier</button>
                 </div>
             </div>
@@ -283,16 +283,14 @@
             }
         });
 
-        // FONKSYON POU DEKONEKTE ITILIZATÈ A
         function logoutSystem() {
             if(currentUser) {
-                usersDB[currentUser.email] = currentUser; // Sove eta aktyèl la anvan li soti
+                usersDB[currentUser.email] = currentUser;
             }
             localStorage.setItem('usersDB', JSON.stringify(usersDB));
             localStorage.removeItem('currentNexoraUser');
             currentUser = null;
             
-            // Re-afiche paj login lan epi netwaye jaden yo
             document.getElementById('loginEmail').value = "";
             document.getElementById('loginPassword').value = "";
             document.getElementById('loginScreen').style.display = 'flex';
@@ -318,6 +316,14 @@
             document.getElementById('profNom').value = currentUser.nom;
             document.getElementById('profPrenom').value = currentUser.prenom;
             document.getElementById('profEmail').value = currentUser.email;
+
+            // KÒD DINAMIK POU LYEN PARÈNAJ LA SOU GITHUB PAGES
+            let userCode = currentUser.prenom.toUpperCase() + Math.floor(100 + Math.random() * 900);
+            if(currentUser.prenom.toUpperCase() === "GRACE") userCode = "GRACE94"; // kenbe ansyen kòd Grace la si se li
+            
+            let currentOrigin = window.location.origin + window.location.pathname;
+            let referralUrl = currentOrigin.replace("dashboard.html", "inscription.html") + "?ref=" + userCode;
+            document.getElementById('refLinkText').innerText = referralUrl;
 
             document.getElementById('filleulCount').innerText = currentUser.filleuls.length;
             const fBody = document.getElementById('filleulsTableBody');
@@ -435,7 +441,7 @@
                         <td>${u.mainBal.toFixed(2)} USDT</td>
                         <td><button class="btn-edit" onclick="editUserBalance('${u.email}')">Mod</button></td>
                     </tr>`;
-            });
+                });
         }
 
         function editUserBalance(email) {
@@ -459,7 +465,7 @@
         });
 
         window.onclick = function(e) { if (e.target.className === 'modal') e.target.style.display = "none"; }
-        
+         
         if (currentUser) {
             document.getElementById('loginScreen').style.display = 'none';
             saveData();

@@ -148,20 +148,20 @@
             "Investir aujourd'hui, gagner demain. Rejoignez la révolution du Cloud Mining de pointe et sécurisez votre liberté financière avec des rendements quotidiens garantis."
         </div>
 
-        <form onsubmit="event.preventDefault(); alert('Inscription réussie (Simulation)');">
+        <form id="registerForm">
             <div class="form-group">
                 <label>Nom</label>
-                <input type="text" placeholder="Votre nom" required>
+                <input type="text" id="regNom" placeholder="Votre nom" required>
             </div>
 
             <div class="form-group">
                 <label>Prénom</label>
-                <input type="text" placeholder="Votre prénom" required>
+                <input type="text" id="regPrenom" placeholder="Votre prénom" required>
             </div>
 
             <div class="form-group">
                 <label>Adresse Email</label>
-                <input type="email" placeholder="exemple@mail.com" required>
+                <input type="email" id="regEmail" placeholder="exemple@mail.com" required>
             </div>
 
             <div class="form-group">
@@ -174,7 +174,7 @@
 
             <div class="form-group">
                 <label>Adresse de Retrait USDT</label>
-                <input type="text" placeholder="Entrez votre adresse wallet" required>
+                <input type="text" id="regWallet" placeholder="Entrez votre adresse wallet" required>
             </div>
 
             <div class="form-group">
@@ -196,7 +196,7 @@
             <button type="submit" class="btn-register">S'INSCRIRE</button>
 
             <div class="login-link">
-                Déjà membre ? <a href="connexion.html">Se connecter</a>
+                Déjà membre ? <a href="index.html">Se connecter</a>
             </div>
         </form>
     </div>
@@ -206,6 +206,64 @@
             const input = document.getElementById(id);
             input.type = input.type === "password" ? "text" : "password";
         }
+
+        // KÒD POU SOU MET FÒM LAN AK REDIREKSYON DINAMIK
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let nom = document.getElementById('regNom').value.trim();
+            let prenom = document.getElementById('regPrenom').value.trim();
+            let email = document.getElementById('regEmail').value.trim().toLowerCase();
+            let network = document.getElementById('crypto-network').value;
+            let wallet = document.getElementById('regWallet').value.trim();
+            let pass = document.getElementById('password').value;
+            let confirmPass = document.getElementById('confirm_password').value;
+
+            if (pass !== confirmPass) {
+                alert("Erreur: Les mots de passe ne correspondent pas !");
+                return;
+            }
+
+            // Chaje baz de done lokal la
+            let usersDB = JSON.parse(localStorage.getItem('usersDB')) || {
+                "colinreakarfen94@gmail.com": { nom: "COLIN", prenom: "Reakarfen", email: "colinreakarfen94@gmail.com", pass: "Reakarfen94", mainBal: 416.00, profitBal: 176.00, role: "admin", activePlan: null, filleuls: [] },
+                "rkmotion94@gmail.com": { 
+                    nom: "KAYCEE", prenom: "Grace", email: "rkmotion94@gmail.com", pass: "Reakarfen94", 
+                    mainBal: 253.00, profitBal: 39.00, role: "user", activePlan: null, filleuls: [] 
+                }
+            };
+
+            if (usersDB[email]) {
+                alert("Erreur: Cet email est déjà enregistré !");
+                return;
+            }
+
+            // Kreye nouvo itilizatè a
+            let newUser = {
+                nom: nom.toUpperCase(),
+                prenom: prenom,
+                email: email,
+                pass: pass,
+                mainBal: 0.00, // Nouvo manm kòmanse ak 0
+                profitBal: 0.00,
+                role: "user",
+                cryptoNetwork: network,
+                walletAddress: wallet,
+                activePlan: null,
+                filleuls: []
+            };
+
+            // Sove nan baz de done a
+            usersDB[email] = newUser;
+            localStorage.setItem('usersDB', JSON.stringify(usersDB));
+            localStorage.setItem('currentNexoraUser', JSON.stringify(newUser));
+
+            alert("Inscription réussie ! Bienvenue chez Nexora Invest.");
+
+            // Redireksyon dinamik ki travay byen sou GitHub Pages
+            let currentPath = window.location.origin + window.location.pathname;
+            window.location.href = currentPath.replace("inscription.html", "dashboard.html");
+        });
     </script>
 </body>
 </html>

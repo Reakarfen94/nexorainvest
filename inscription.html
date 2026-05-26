@@ -134,6 +134,19 @@
             text-decoration: none;
             font-weight: bold;
         }
+
+        .sponsor-badge {
+            background-color: #1a1c23;
+            border: 1px dashed #c5a059;
+            color: #00ffcc;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -147,6 +160,9 @@
         <div class="marketing-text">
             "Investir aujourd'hui, gagner demain. Rejoignez la révolution du Cloud Mining de pointe et sécurisez votre liberté financière avec des rendements quotidiens garantis."
         </div>
+
+        <!-- Ti bwat sa a ap parèt pou montre non parenn lan si moun lan klike sou yon lyen -->
+        <div id="sponsorBox" class="sponsor-badge"></div>
 
         <form id="registerForm">
             <div class="form-group">
@@ -207,7 +223,24 @@
             input.type = input.type === "password" ? "text" : "password";
         }
 
-        // KÒD POU SOU MET FÒM LAN AK REDIREKSYON DINAMIK
+        // 1. CHECHE SI GEN YON KÒD PARÈNAJ NAN URL LA
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        let sponsorEmail = null;
+
+        if (refCode) {
+            const sponsorBox = document.getElementById('sponsorBox');
+            sponsorBox.style.display = "block";
+            
+            if (refCode.toUpperCase() === "GRACE94") {
+                sponsorBox.innerText = "Parrain: KAYCEE Grace ✨";
+                sponsorEmail = "rkmotion94@gmail.com"; // Email Kaycee nan sistèm nan
+            } else {
+                sponsorBox.innerText = "Code Parrainage: " + refCode;
+            }
+        }
+
+        // 2. LÈ ITILIZATÈ A SUBMIT FÒM LAN
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -224,7 +257,7 @@
                 return;
             }
 
-            // Chaje baz de done lokal la
+            // Chaje baz de done a
             let usersDB = JSON.parse(localStorage.getItem('usersDB')) || {
                 "colinreakarfen94@gmail.com": { nom: "COLIN", prenom: "Reakarfen", email: "colinreakarfen94@gmail.com", pass: "Reakarfen94", mainBal: 416.00, profitBal: 176.00, role: "admin", activePlan: null, filleuls: [] },
                 "rkmotion94@gmail.com": { 
@@ -244,7 +277,7 @@
                 prenom: prenom,
                 email: email,
                 pass: pass,
-                mainBal: 0.00, // Nouvo manm kòmanse ak 0
+                mainBal: 0.00,
                 profitBal: 0.00,
                 role: "user",
                 cryptoNetwork: network,
@@ -253,14 +286,29 @@
                 filleuls: []
             };
 
-            // Sove nan baz de done a
+            // 3. LOGIK PARÈNAJ OTO MATIK: Si gen yon parenn, mete nouvo moun lan nan lis li a
+            if (sponsorEmail && usersDB[sponsorEmail]) {
+                // Si lis la te vid oswa pa t egziste, kreye l
+                if (!usersDB[sponsorEmail].filleuls) {
+                    usersDB[sponsorEmail].filleuls = [];
+                }
+                
+                // Ajoute nouvo filleul la nan lis la
+                usersDB[sponsorEmail].filleuls.push({
+                    name: prenom + " " + nom.toUpperCase(),
+                    plan: "Aucun plan", // L ap chanje lè l fin achte yon plan
+                    network: network
+                });
+            }
+
+            // Sove tout bagay nan LocalStorage
             usersDB[email] = newUser;
             localStorage.setItem('usersDB', JSON.stringify(usersDB));
             localStorage.setItem('currentNexoraUser', JSON.stringify(newUser));
 
             alert("Inscription réussie ! Bienvenue chez Nexora Invest.");
 
-            // Redireksyon dinamik ki travay byen sou GitHub Pages
+            // Redireksyon sou Dashboard la
             let currentPath = window.location.origin + window.location.pathname;
             window.location.href = currentPath.replace("inscription.html", "dashboard.html");
         });

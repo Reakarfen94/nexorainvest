@@ -143,7 +143,8 @@
             "Le minage intelligent à portée de main. Connectez-vous pour suivre la croissance de vos actifs en temps réel."
         </div>
 
-        <form onsubmit="event.preventDefault(); alert('Connexion réussie (Simulation)');">
+        <!-- Mwen modifye onsubmit la pou l rele nouvo fonksyon an -->
+        <form onsubmit="handleLogin(event);">
             <div class="form-group">
                 <label>Adresse Email</label>
                 <input type="email" placeholder="exemple@mail.com" required>
@@ -169,6 +170,15 @@
         function togglePass(id) {
             const input = document.getElementById(id);
             input.type = input.type === "password" ? "text" : "password";
+        }
+
+        // Nouvo fonksyon ki jere alèt la ak redirection an
+        function handleLogin(event) {
+            event.preventDefault();
+            alert('Connexion réussie (Simulation)');
+            
+            // Liy sa a ap travay ni an lokal ni sou GitHub Pages pou chanje paj la
+            window.location.href = window.location.pathname.replace("connexion.html", "dashboard.html");
         }
     </script>
 </body>
